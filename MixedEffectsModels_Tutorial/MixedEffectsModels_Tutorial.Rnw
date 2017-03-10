@@ -1,0 +1,476 @@
+\documentclass{article, }
+
+\title{Mixed Effects Models, an applied introduction}
+\author{Tana\\matteo.tanadini@plants.ox.ac.uk}
+
+\usepackage[paper=a4paper, margin=2.5 cm]{geometry}
+\usepackage{color}
+\usepackage[parfill]{parskip}
+
+%% %% \usepackage[backend=bibtex]{biblatex}
+\usepackage[round]{natbib}
+
+\usepackage{subfig}
+\usepackage{float}
+\usepackage{hyperref}
+
+%% for Bibtex
+%% %% \bibliography{ReferencesGeneral.bib, Rpackages.bib}
+
+
+
+\begin{document}
+
+
+<<globalOpts, include=FALSE>>=
+require(knitr)
+opts_chunk$set(concordance = TRUE,
+               fig.align = "center",
+               out.width = ".7\\linewidth", ## default is 1
+               tidy = TRUE,
+               comment = NA,
+               fig.pos = "H",
+               crop = hook_pdfcrop) ## changes mar defaults...
+##
+options(digits = 2)
+@ 
+
+
+\maketitle
+% 
+% 
+% <<getWd, echo=FALSE>>=
+% getwd()
+% @ 
+% 
+% 
+% \tableofcontents
+% \newpage  
+% 
+% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% TRUE START OF THE DOCUMENT
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% \section{Read and check data}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Introduce Mixed Models
+
+
+
+%%%%%%%%%%%%%%%%%%%%
+%% Introduce Example
+
+
+
+
+
+
+%%%%%%
+<<sessionInfo, size='footnotesize'>>= 
+sessionInfo()
+@ 
+
+\end{document}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% https://github.com/yihui/knitr-examples
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% FIGURES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% figure size:
+%% ... out.width='0.8\\linewidth', ...
+%% while fig.width is the actual size of the figure
+%% in inches (defaults to 7)
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Figure captions (p 77.)
+%% fig.cap ='this is a nice figure', then use fig.pos='h'
+%% You can use figure references too. For example, Figure \ref{fig:t-test}. 
+%% The reference key is ``fig: + the chunk label'' by default.
+%% fig.cap=c('Hi figure one', 'Hi figure two') %% two figures same chunck OR
+%% fig.cap='two plots', fig.subcap=c('one plot', 'the other one'),
+%% this needs the package subfig in the preamble 
+%% plot(1:10)
+%% plot(rnorm(10), pch=19)
+%% 
+%% fig.lp is the label (if you dont' want to use the default)
+%%
+%% Dynamically generate a figure caption: 
+%% <<setup>>=
+%% # evaluate fig.cap after a chunk is evaluated
+%% opts_knit$set(eval.after = 'fig.cap')
+%% @
+%%
+%% <<t-test, fig.cap=paste('The P-value is', format.pval(t.test(x)$p.value)), fig.height=2.5>>=
+%% x = rnorm(30)
+%% par(mar=c(4, 4, .1, .1)); hist(x, main='')
+%% @
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% LateX expression in R plot
+%% dev = 'tikz'
+%% plot(y~x, main = $\alpha \sim \x_[i,j]$)
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% pdf.options(useDingbats = TRUE)
+%% for plots with many points
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% fig.keep = 'last' or 'high' for plots where we use low-level
+%% plotting functions
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% kable(head(iris), row.names=FALSE, booktabs=TRUE)
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% listings: nice boxes around code...
+%% <<setup, include=FALSE>>=
+%% library(knitr)
+%% render_listings()
+%% @
+%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% I don't know why...but if purl() is there...You can't name 
+%% chunks...
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% chunck argument size='footnotesize'
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% multiple columns:
+%% \begin{multicols}{2}
+%% <<test>>=
+%% 1+1
+%% 2*pi*10
+%% par(mar=c(4, 4, .1, .1))
+%% plot(rnorm(100))
+%% @
+%% 
+%% \end{multicols}
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% CHECKPOINT:
+%% the working directory need to be set were the .Rnw lives,
+%% if not the case, it uses the root as working directory
+%% and all packages ever used will be download in the checkpoint 
+%% folder.
+%% e.g. setwd("/home/tana/projectsOxford/Tree_Rings_Growth")
+%% <<results='hide'>>=
+%% require(checkpoint)
+%% checkpoint("DATE ADAPTEDorCHANGED LIKE 2015-07-19",
+%%            checkpoinLocation="WHereYouWork")
+%% ## ,R.version="3.1.1"
+%% @
+%% I may want to delete the created folder in .checkpoint$/$...
+%% once the project is finished (... storage space).
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% \texttt{} %% typewriter
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% error = FALSE to stop knitr when errors occur
+%% highlight = FALSE (no color for functions etc.)
+%% background = "orange"
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% \label{myref1}
+%% \ref{myref1} %% gives the section
+%% \pageref{myref1} %% gives the page
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Line numbering: put this in the preamble
+%% \usepackage{lineno} %% for line numbering
+%% \linenumbers
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% How to include FIGURES:
+%% \begin{figure}[h!]
+%% Picture 'H'ere, 'B'ottom or 'T'op;
+%% '!' Tries to impose your will to LaTeX
+%% \centering
+%% \includegraphics[width=.5\textwidth]{CartaDesign} %<< no file extension
+%% .5\textwidth stands for 50% of text width
+%% \caption[Study area] 
+%% Legend for the list of figures at the beginning of you thesis
+%% {Map of the study area with sampling locations}
+%% legend displayed below the graph.
+%% \label{fig:StudyArea}
+%% \end{figure}
+%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% fig.pos: (''; character) a character string for the
+%% figure position arrangement to be used in \begin{figure}[fig.pos]
+%% I guess that I can use 'h'
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% ref.label = 'nameOfaPreviousChunk'
+%% recalls the code in that chunk...not sure how it works
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% tidy.opts = list(width.cutoff = 40)
+%% so that the width of the source code
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% cache = TRUE
+%% for computational expensive chunks, but also for loading 
+%% large datasets. See page 83.
+%% If you use cache then chunk naming is important. Indeed
+%% adding or removing chunks will make all chunks change
+%% which in turn makes cacheing useless.
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% code = readLines("~/myfunctions/FDiagnoForPublications.R")
+%% as a chunk option...cool to call reused R scripts...
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Ordering panels with lattice
+%% Below I ordering y values (or lines) in a dotplot
+%% dotplot(species.short ~ Freq, groups = census, 
+%%         data = d.pt.1, subset = survival == 1,
+%%         type = c("p","h"),
+%%         auto.key = list(space = "right", title = "census", cex.title = 1.2),
+%%         ##
+%%         prepanel = function(x, y){
+%%           list(ylim = levels(reorder(y, x)))
+%%         },
+%%         panel = function(x, y, ...){
+%%           panel.dotplot(x, reorder(y,x), ...)
+%%         })
+%% if there were more panels, we could order them by median (of the displayed values)
+%% index.cond = function(x,y) mean(y, na.rm = TRUE), see page 63 lattice book. OR
+%% d.1$Site.ord <- with(d.1, reorder(Site, Shoot2, mean, na.rm = TRUE)) 
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% splitting screen for lattice
+%% print(xy.1, split = c(1,2,2,3), newpage = FALSE)
+%% ## the plot region is divided in 6, 2 cols and 3 rows.
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Spatial analysis of residuals
+%%
+%% source("~/myfunctions/fmyColRamp.R") + regr0
+%% plres2x(resid(mod.0) ~ X + Y, data = d.1, asp = 1,
+%%         scol=f.myColRamp(resid(mod.0)))
+%%
+%% or bubble plots
+%% pos.res <- as.numeric((sign(resid(mod.sbe.0)) == 1) + 1)
+%% head(pos.res)
+%% plot(Y ~ X, col = pos.res, data = d.sbe.growth,
+%%      xlim = c(0,200), ylim = c(0,200), asp =1, 
+%%      cex= abs(resid(mod.sbe.0)) * 5)
+%% OR cex = as.numeric(cut(resid(mod.sbe.0), breaks = 8) / 2)
+%%
+%% variogramms:
+%% plot(variog(data = resid(lm.0), coords = d.1[ ,c("X","Y")],
+%%             max.dist = 50, or  uvec=seq(0,50, length=10)))
+%% or variog4()
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% merge(x = d.1, y = d.2, by = intersect(names(d.1), names(d.2)))
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% aggregate(): use lists () (i.e. not the formula interface)
+%% and na.rm = TRUE when NAs are present
+%% see page 42-43 in DataAsRds for Method paper
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Getting random effects in a nice data frame
+%% re.3 <- ranef(mod.agg.3)
+%% str(re.3)
+%% d.re.3.sp.plot <- re.3[["species.short:plot"]]
+%% d.re.3.sp.plot$sp <- factor(sub("\\:.*", "", rownames(d.re.3.sp.plot)))
+%% d.re.3.sp.plot$site <- factor(sub("^.*?\\:", "", rownames(d.re.3.sp.plot)))
+%% rownames(d.re.3.sp.plot) <- NULL
+%% names(d.re.3.sp.plot)[1] <- "Int"
+%% ##
+%% head(d.re.3.sp.plot)
+%% str(d.re.3.sp.plot)
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% QQ-plots for random effects
+%% re.8 <- ranef(mod.agg.8)
+%% qqmath(re.8,
+%%        col.line = "#0080ff", ## lattice blue
+%%        prepanel = prepanel.qqmathline,
+%%        panel = function(x, ...){
+%%          panel.qqmathline(x, ...)
+%%          panel.qqmath(x, ...)
+%%          })
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Bootstrapped CI for mixed models
+%% boot.2.div <- bootMer(mod.2, FUN = function(x) fixef(x)["Diversity.tree"],
+%%                       nsim = 10^3, seed = 2,
+%%                       use.u = TRUE, type = "semiparametric")
+%% boot.ci(boot.2.div, type = "basic")
+%% OR use more complex functions (NB: FUN must return a vector)
+%% f.getTheta <- function(x) {v.theta <- unname(unlist(VarCorr(x)))
+%%                            c(sd.sp.pl.int = sqrt(v.theta[1]), 
+%%                              corr = v.theta[2] / (sqrt(v.theta[1]) * sqrt(v.theta[4])),
+%%                              sd.sp.pl.time = sqrt(v.theta[4]), 
+%%                              sd.plot = sqrt(v.theta[5]))}
+%% NB: unlist(VarCorr(.)) returns the COVariance matrix!
+%% We compute CI on correlations and sd!
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% LaTeX
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% \LaTeX \_
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% \input{file1}  %% file1.tex
+%% or \include{file1}  %% this does not work in the preamble
+%% and adds a clear page before and after it. 
+%% \includeonly{...} can be useful for theses and books
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Other latex stuff
+%% options(useFancyQuotes = "TeX")
+%% {parskip} no indent at the beginning of the paragraph
+%% {float} with \begin{figure}[H] puts the figure there! 
+%% Or use fig.pos='H' in chunk (global) options
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% References:
+%% put this in the preamble
+%% \usepackage[backend=bibtex]{biblatex}
+%% \bibliography{ReferencesPapersMehrabi2016.bib, Rpackages.bib}
+%% and put \printbibliography at the end
+%% 
+%% 1) Create the bib file for Papers
+%% <<rmRefs, include=FALSE>>=
+%% system("rm ReferencesPapersMehrabi2016.bib")
+%% @
+%% \input{ReferencesPapersTex} 
+%% this is the .tex file that contains all bib.tex entries
+%%
+%% begin{filecontents*}{ReferencesPapersMehrabi2016.bib}
+%% @BOOK{hunt1982,
+%%   title = {Plant growth curves. The functional approach to plant growth analysis.},
+%%   publisher = {Edward Arnold Ltd.},
+%%   year = {1982},
+%%   author = {Hunt, Roderick and others},
+%%   __markedentry = {[matteot:6]},
+%%   owner = {matteot},
+%%   timestamp = {2015.06.11}
+%% }  
+%% \end{filecontents*}
+%% This is also in the preamble
+%% 
+%% 2) Citing R packages:
+%% <<writeBib, include = FALSE>>=
+%% write_bib(x = c("knitr", "car", "boot", "robustlmm", "lme4"),
+%%                  file = "Rpackages.bib")
+%% @
+%% Note: if you use checkpoint, put this after the function call
+%% \cite{R-knitr}
+%%
+%% 3) Citing R:
+%% type "citation()" in R and copy it in the Papers tex file.
+%% Note that there is not reference name for this entry (set it to R).
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% \usepackage{hyperref}
+%% \url{www.google.com} they can click on it :) OR
+%% \href{address}{here} even nicer :)
+%% they can click on section or page references
+%% In addition the table of contents is also "clickable" :)
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% quotation marks: ``some text'' %% is the proper way!
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Beamer!!!
+%% There are some peculiarites with beamer...
+%%
+%% \setbeamertemplate{navigation symbols}{}  %% removes navigation symbols
+%%
+%% \usepackage{appendixnumberbeamer}  \appendix %% does not number 
+%% additioanl slides :)
+%%
+%% Styles:
+%% 1) for slides:
+%% \documentclass[10pt]{beamer}
+%% \usetheme{Warsaw}
+%%
+%% \author[Tana]{matteo.tanadini@plants.ox.ac.uk}
+%% \title[short title]{full title}
+%% this is interesting as these are on each slide!
+%%
+%% 2)for Handout:
+%% \documentclass[handout]{beamer}
+%% \usetheme{Boadilla}
+%% \usefonttheme[onlysmall]{structurebold}
+%% \usecolortheme{seahorse}
+%%  %% pdfnup --nup 2x2 --suffix '2x2' PresenationTransferJune2015.pdf 
+%% %% \institute[]{Plant Sciences Department, Univeristy of Oxford}
+%%
+%% \beamerdefaultoverlayspecification{<+->}
+%%    every itemize or enumerate uses then uncover
+%%    use \item<.-> to remove the automatic uncover
+%% or use for only these list that you want to uncover
+%% \item \uncover<2->
+%% \item \uncover<3->
+%%
+%% - [fragile] or reults=tex (default is verbatim)
+%% - <<>>= and @ have to be at the beginning of the line
+%% - no empty lines in the R code
+%%
+%% \begin{frame}[fragile]{Name of this frame}
+%% <<>>=
+%% x <- 1:100
+%% y <- rnorm(100)
+%% @   
+%% \end{frame}  
+%%
+%% or...
+%% \begin{verbatim}
+%% Call:
+%% lm(formula = y ~ ., data = d.data)
+%% Residuals:
+%%        Min         1Q     Median         3Q        Max 
+%% -5.871e-15 -1.299e-15 -1.930e-16  6.624e-16  8.202e-15 
+%% Coefficients: (1 not defined because of singularities)
+%%               Estimate Std. Error    t value Pr(>|t|)    
+%% (Intercept)  0.000e+00  2.184e-15  0.000e+00    1.000    
+%% x            1.000e+00  5.312e-16  1.883e+15   <2e-16 ***
+%% z            1.000e+00  1.422e-15  7.030e+14   <2e-16 ***
+%% e            1.000e+00  7.287e-16  1.372e+15   <2e-16 ***
+%% \end{verbatim} %% also works, but not elegant...
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
